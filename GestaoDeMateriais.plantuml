@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor LightYellow
+  BorderColor Black
+}
+
+actor "Usuário" as Usuario
+
+package "Gestão de Materiais" {
+  usecase "Cadastrar material" as UC_Cadastrar
+  usecase "Definir unidade de medida" as UC_Unidade
+  usecase "Selecionar categoria" as UC_Categoria
+  usecase "Adicionar especificações técnicas" as UC_Especificacoes
+  usecase "Informar quantidade" as UC_Quantidade
+}
+
+Usuario --> UC_Cadastrar
+UC_Cadastrar .down.> UC_Unidade : <<include>>
+UC_Cadastrar .down.> UC_Categoria : <<include>>
+UC_Cadastrar .down.> UC_Especificacoes : <<include>>
+UC_Cadastrar .down.> UC_Quantidade : <<include>>
+
+@enduml
