@@ -1,3 +1,5 @@
+skinparam dpi 300
+
 @startuml
 left to right direction
 skinparam packageStyle rectangle
@@ -7,19 +9,27 @@ skinparam usecase {
 }
 
 actor "Usuário" as Usuario
+actor "Sistema" as Sistema
 
 package "Gestão de Materiais" {
   usecase "Cadastrar material" as UC_Cadastrar
+  usecase "Registrar entrada de material" as UC_RegistrarEntrada
   usecase "Definir unidade de medida" as UC_Unidade
   usecase "Selecionar categoria" as UC_Categoria
   usecase "Adicionar especificações técnicas" as UC_Especificacoes
   usecase "Informar quantidade" as UC_Quantidade
+  usecase "Emitir alerta de estoque mínimo" as UC_AlertaMinimo
+  usecase "Atualizar saldo de material" as UC_AtualizarSaldo
 }
 
 Usuario --> UC_Cadastrar
+Usuario --> UC_RegistrarEntrada
+Sistema --> UC_AlertaMinimo
+
 UC_Cadastrar .down.> UC_Unidade : <<include>>
 UC_Cadastrar .down.> UC_Categoria : <<include>>
 UC_Cadastrar .down.> UC_Especificacoes : <<include>>
 UC_Cadastrar .down.> UC_Quantidade : <<include>>
+UC_RegistrarEntrada .down.> UC_AtualizarSaldo : <<include>>
 
 @enduml

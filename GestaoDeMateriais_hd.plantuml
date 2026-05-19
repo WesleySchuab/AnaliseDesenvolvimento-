@@ -16,9 +16,11 @@ package "Gestão de Materiais" {
   usecase "Selecionar categoria" as UC_Categoria
   usecase "Adicionar especificações técnicas" as UC_Especificacoes
   usecase "Informar quantidade" as UC_Quantidade
+  usecase "Emitir alerta de estoque mínimo" as UC_AlertaMinimo
 }
 
 Usuario --> UC_Cadastrar
+Usuario --> UC_AlertaMinimo
 UC_Cadastrar .down.> UC_Unidade : <<include>>
 UC_Cadastrar .down.> UC_Categoria : <<include>>
 UC_Cadastrar .down.> UC_Especificacoes : <<include>>
