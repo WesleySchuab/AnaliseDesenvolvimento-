@@ -1,12 +1,12 @@
-@startuml InfoAgro - Gestão de Terceiros
+@startuml InfoAgro - Gestão de Terceiros e EPIs Atualizado
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
 
-actor "Analista de Suprimentos / Contratos" as Suprimentos
+actor "Analista de Contratos" as Suprimentos
 actor "Técnico de Segurança (SST)" as SST
-actor "Fiscal de Contrato / Campo" as Fiscal
-actor "Preposto / Gestor da Terceirizada" as Preposto
+actor "Fiscal de Campo" as Fiscal
+actor "Preposto da Terceirizada" as Preposto
 
 rectangle "InfoAgro - Módulo Gestão de Terceiros" {
     
@@ -14,40 +14,55 @@ rectangle "InfoAgro - Módulo Gestão de Terceiros" {
         usecase "UC101 - Homologar Empresa Terceirizada" as UC101
         usecase "UC102 - Gerenciar Contratos de Prestação de Serviço" as UC102
         usecase "UC103 - Auditar Certidões e Regularidade Fiscal" as UC103
+        usecase "UC114 - Definir Matriz de Responsabilidade de EPI" as UC114
     }
     
     package "Mobilização e Acesso" {
         usecase "UC104 - Cadastrar Trabalhadores Terceirizados" as UC104
-        usecase "UC105 - Validar Integração e EPIs/ASOs" as UC105
-        usecase "UC106 - Controlar Acesso à Propriedade / Portaria" as UC106
+        usecase "UC105 - Validar Integração e ASOs" as UC105
+        usecase "UC106 - Controlar Acesso à Propriedade" as UC106
+    }
+    
+    package "Gestão de EPIs (Segurança do Trabalho)" {
+        usecase "UC110 - Controlar Estoque e Validade de CA" as UC110
+        usecase "UC111 - Registrar Entrega/Ficha de EPI" as UC111
+        usecase "UC112 - Fiscalizar Uso de EPI/EPC no Campo" as UC112
+        usecase "UC113 - Registrar Substituição de EPI" as UC113
     }
     
     package "Medição e Qualidade" {
-        usecase "UC107 - Registrar Diário de Obra / Serviço" as UC107
+        usecase "UC107 - Registrar Diário de Serviço" as UC107
         usecase "UC108 - Realizar Medição de Serviços" as UC108
         usecase "UC109 - Aplicar Penalidades / Advertências" as UC109
     }
     
-    ' Relacionamentos
+    ' Relacionamentos Ajustados
     UC101 ..> UC103 : <<include>>
+    UC102 ..> UC114 : <<include>> : (Cláusula de Fornecimento)
     UC104 ..> UC105 : <<include>>
-    UC108 <.. UC109 : <<extend>> (se houver inconformidade)
+    
+    ' Trava de portaria: Bloqueia acesso se a Ficha de EPI ou ASO estiverem inválidos
+    UC106 ..> UC105 : <<include>>
+    
+    UC108 <.. UC109 : <<extend>> (Desconto por Quebra de Segurança)
+    UC112 <.. UC109 : <<extend>> (Flagrante sem EPI)
 }
 
-' Associações dos Atores
 Suprimentos --> UC101
 Suprimentos --> UC102
 Suprimentos --> UC108
 
 SST --> UC105
+SST --> UC110
+SST --> UC111
 
 Fiscal --> UC106
 Fiscal --> UC107
-Fiscal --> UC108
+Fiscal --> UC112
 Fiscal --> UC109
 
-' O Preposto externo interage fornecendo dados
 Preposto --> UC104
 Preposto --> UC107
+Preposto --> UC111
 
 @enduml

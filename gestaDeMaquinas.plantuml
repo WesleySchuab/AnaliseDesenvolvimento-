@@ -1,0 +1,57 @@
+@startuml InfoAgro - Gestão de Maquinários Atualizado
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Gestor de Frota / Mecânico" as Mecanico
+actor "Operador de Máquina" as Operador
+actor "Almoxarife" as Almoxarife
+
+rectangle "InfoAgro - Módulo Gestão de Maquinários" {
+    
+    usecase "UC000 - Sincronizar Dados em Modo Offline" as UC000
+    
+    package "Cadastro e Disponibilidade" {
+        usecase "UC301 - Cadastrar Máquinas e Implementos" as UC301
+        usecase "UC302 - Controlar Documentação e Licenciamentos" as UC302
+        usecase "UC303 - Monitorar Disponibilidade da Frota (Status)" as UC303
+    }
+    
+    package "Operação e Campo (Offline-First)" {
+        usecase "UC304 - Registrar Apontamento de Horímetro" as UC304
+        usecase "UC305 - Realizar Checklist de Pré-Operação" as UC305
+        usecase "UC306 - Abastecer via Baixa de Estoque (Tanque/Comboio)" as UC306
+    }
+    
+    package "Manutenção e Oficina" {
+        usecase "UC307 - Planificar Manutenção Preventiva" as UC307
+        usecase "UC308 - Abrir Ordem de Serviço (OS) Corretiva" as UC308
+        usecase "UC309 - Requisitar Peças para Oficina" as UC309
+        usecase "UC310 - Registrar Histórico de Custos do Ativo" as UC310
+    }
+    
+    ' Relacionamentos
+    UC305 ..> UC000 : <<include>>
+    UC304 ..> UC000 : <<include>>
+    
+    UC305 <.. UC308 : <<extend>> (Falha Crítica aponta para Oficina)
+    UC308 ..> UC309 : <<include>> : (Consome de Materiais)
+    UC308 ..> UC310 : <<include>>
+    UC306 ..> UC310 : <<include>> : (Combustível gera custo direto na máquina)
+}
+
+Mecanico --> UC301
+Mecanico --> UC302
+Mecanico --> UC303
+Mecanico --> UC307
+Mecanico --> UC308
+Mecanico --> UC310
+
+Operador --> UC304
+Operador --> UC305
+Operador --> UC306 : (Informa os Litros e o Tanque de Origem)
+
+Almoxarife --> UC309
+Almoxarife --> UC306 : (Valida o saldo do Tanque de Combustível)
+
+@enduml

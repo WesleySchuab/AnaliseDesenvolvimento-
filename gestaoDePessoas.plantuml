@@ -1,66 +1,56 @@
-@startuml InfoAgro - Gestão de Terceiros e EPIs
+@startuml InfoAgro - Gestão de Pessoas Atualizado
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
 
-actor "Analista de Suprimentos / Almoxarifado" as Suprimentos
-actor "Técnico de Segurança (SST)" as SST
-actor "Fiscal de Contrato / Campo" as Fiscal
-actor "Preposto / Gestor da Terceirizada" as Preposto
+actor "Analista de RH" as RH
+actor "Gestor de Campo" as Gestor
+actor "Colaborador" as Funcionario
 
-rectangle "InfoAgro - Módulo Gestão de Terceiros" {
+rectangle "InfoAgro - Módulo Gestão de Pessoas" {
     
-    package "Homologação e Contratos" {
-        usecase "UC101 - Homologar Empresa Terceirizada" as UC101
-        usecase "UC102 - Gerenciar Contratos de Prestação de Serviço" as UC102
-        usecase "UC103 - Auditar Certidões e Regularidade Fiscal" as UC103
+    package "Infraestrutura Base" {
+        usecase "UC000 - Sincronizar Dados em Modo Offline" as UC000
     }
     
-    package "Mobilização e Acesso" {
-        usecase "UC104 - Cadastrar Trabalhadores Terceirizados" as UC104
-        usecase "UC105 - Validar Integração e ASOs" as UC105
-        usecase "UC106 - Controlar Acesso à Propriedade" as UC106
+    package "Cadastro e Departamento Pessoal" {
+        usecase "UC001 - Manter Registro de Colaborador" as UC001
+        usecase "UC002 - Controlar Documentação e Exames (NRs)" as UC002
+        usecase "UC003 - Gerenciar Contratos de Safra" as UC003
     }
     
-    package "Gestão de EPIs (Segurança do Trabalho)" {
-        usecase "UC110 - Controlar Estoque e Validade de CA dos EPIs" as UC110
-        usecase "UC111 - Registrar Entrega/Ficha de EPI" as UC111
-        usecase "UC112 - Fiscalizar Uso de EPI/EPC no Campo" as UC112
-        usecase "UC113 - Registrar Substituição por Desgaste/Extravio" as UC113
+    package "Ponto e Frentes de Trabalho" {
+        usecase "UC004 - Apontar Produção/Horas no Campo" as UC004
+        usecase "UC005 - Escalar Frentes de Trabalho" as UC005
+        usecase "UC006 - Justificar Ausências/Atestados" as UC006
     }
     
-    package "Medição e Qualidade" {
-        usecase "UC107 - Registrar Diário de Obra / Serviço" as UC107
-        usecase "UC108 - Realizar Medição de Serviços" as UC108
-        usecase "UC109 - Aplicar Penalidades / Advertências" as UC109
+    package "Performance e Remuneração" {
+        usecase "UC007 - Processar Folha de Pagamento" as UC007
+        usecase "UC008 - Calcular Bônus por Produtividade" as UC008
+        usecase "UC009 - Avaliar Desempenho Operacional" as UC009
     }
     
-    ' Relacionamentos
-    UC101 ..> UC103 : <<include>>
-    UC104 ..> UC105 : <<include>>
-    UC105 ..> UC111 : <<include>> : (Exige Ficha de EPI Ativa)
-    UC108 <.. UC109 : <<extend>> (Inconformidade de Segurança)
-    UC112 <.. UC109 : <<extend>> (Trabalhador sem EPI)
-    UC111 <.. UC113 : <<extend>>
+    ' Novas amarrações de requisitos
+    UC001 <.. UC003 : <<extend>>
+    UC007 ..> UC008 : <<include>>
+    
+    ' O apontamento agora depende da sincronização offline e alimenta a produtividade
+    UC004 ..> UC000 : <<include>> : (Operação em Campo)
+    UC004 ..> UC008 : <<evidences>> : (Vira base para bônus)
 }
 
-' Associações dos Atores
-Suprimentos --> UC101
-Suprimentos --> UC102
-Suprimentos --> UC108
-Suprimentos --> UC110 : (Controle de Estoque)
+RH --> UC001
+RH --> UC002
+RH --> UC003
+RH --> UC006
+RH --> UC007
 
-SST --> UC105
-SST --> UC110
-SST --> UC111
+Gestor --> UC004 : (Informa Projeto/Centro de Custo obrigatório)
+Gestor --> UC005
+Gestor --> UC009
 
-Fiscal --> UC106
-Fiscal --> UC107
-Fiscal --> UC112 : (Blitz de Segurança)
-Fiscal --> UC109
-
-Preposto --> UC104
-Preposto --> UC107
-Preposto --> UC111 : (Fornece comprovante de entrega)
+Funcionario --> UC004
+Funcionario --> UC006
 
 @enduml
