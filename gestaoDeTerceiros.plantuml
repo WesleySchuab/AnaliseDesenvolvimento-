@@ -1,0 +1,53 @@
+@startuml InfoAgro - Gestão de Terceiros
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Analista de Suprimentos / Contratos" as Suprimentos
+actor "Técnico de Segurança (SST)" as SST
+actor "Fiscal de Contrato / Campo" as Fiscal
+actor "Preposto / Gestor da Terceirizada" as Preposto
+
+rectangle "InfoAgro - Módulo Gestão de Terceiros" {
+    
+    package "Homologação e Contratos" {
+        usecase "UC101 - Homologar Empresa Terceirizada" as UC101
+        usecase "UC102 - Gerenciar Contratos de Prestação de Serviço" as UC102
+        usecase "UC103 - Auditar Certidões e Regularidade Fiscal" as UC103
+    }
+    
+    package "Mobilização e Acesso" {
+        usecase "UC104 - Cadastrar Trabalhadores Terceirizados" as UC104
+        usecase "UC105 - Validar Integração e EPIs/ASOs" as UC105
+        usecase "UC106 - Controlar Acesso à Propriedade / Portaria" as UC106
+    }
+    
+    package "Medição e Qualidade" {
+        usecase "UC107 - Registrar Diário de Obra / Serviço" as UC107
+        usecase "UC108 - Realizar Medição de Serviços" as UC108
+        usecase "UC109 - Aplicar Penalidades / Advertências" as UC109
+    }
+    
+    ' Relacionamentos
+    UC101 ..> UC103 : <<include>>
+    UC104 ..> UC105 : <<include>>
+    UC108 <.. UC109 : <<extend>> (se houver inconformidade)
+}
+
+' Associações dos Atores
+Suprimentos --> UC101
+Suprimentos --> UC102
+Suprimentos --> UC108
+
+SST --> UC105
+
+Fiscal --> UC106
+Fiscal --> UC107
+Fiscal --> UC108
+Fiscal --> UC109
+
+' O Preposto externo interage fornecendo dados
+Preposto --> UC104
+Preposto --> UC107
+
+@enduml
