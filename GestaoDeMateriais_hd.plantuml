@@ -10,40 +10,47 @@ actor "Técnico de Segurança (SST)" as SST
 rectangle "InfoAgro - Módulo Gestão de Materiais" {
     
     package "Entrada e Recebimento" {
-        usecase "UC201 - Receber Material via XML de Nota Fiscal" as UC201
-        usecase "UC202 - Realizar Conferência Cega Física" as UC202
-        usecase "UC203 - Devolver Mercadoria com Divergência" as UC203
+        usecase "UC201 - Importar XML" as UC201
+        usecase "UC202 - Realizar Conferência Cega" as UC202
+        usecase "UC203 - Devolver Mercadoria" as UC203
+        
+        ' Representação de Decisão/Validação Baseada em Condição
+        usecase "Sucesso na\nConferência?" as Decisao << (D,#FFAAAA) Decisão >>
     }
     
     package "Estoque e Armazenamento" {
-        usecase "UC204 - Controlar Lotes e Validades (Químicos/Sementes)" as UC204
-        usecase "UC205 - Gerenciar Estoque Mínimo e Ponto de Pedido" as UC205
-        usecase "UC206 - Cadastrar Itens com Atributos Específicos (C.A. / Onu)" as UC206
-        usecase "UC207 - Realizar Inventário Cíclico" as UC207
+        usecase "UC204 - Controlar Lotes" as UC204
+        usecase "UC205 - Definir Estoque Mínimo" as UC205
+        usecase "UC206 - Cadastrar Itens" as UC206
+        usecase "UC207 - Realizar Inventário" as UC207
     }
     
     package "Saída e Apropriação" {
-        usecase "UC208 - Solicitar/Requisitar Material ou Insumo" as UC208
-        usecase "UC209 - Autorizar/Liberar Saída de Almoxarifado" as UC209
-        usecase "UC210 - Registrar Consumo por Destino (Máquina/Projeto/Frente)" as UC210
+        usecase "UC208 - Requisitar Material" as UC208
+        usecase "UC209 - Autorizar Saída" as UC209
+        usecase "UC210 - Registrar Consumo" as UC210
     }
     
+    ' Fluxos e Dependências com Decisão
     UC201 ..> UC202 : <<include>>
-    UC202 <.. UC203 : <<extend>>
+    UC202 ..> Decisao : <<indica resultado>>
+    Decisao ..> UC203 : <<no>> : <<extend>>
+    Decisao ..> UC204 : <<yes>> : <<include>>
     UC209 ..> UC210 : <<include>>
 }
 
-Almoxarife --> UC201
-Almoxarife --> UC202
-Almoxarife --> UC205
-Almoxarife --> UC206
-Almoxarife --> UC207
-Almoxarife --> UC209
+' Relacionamentos com Cardinalidade (Estilo Entidade-Relacionamento)
+Almoxarife "1" --> "*" UC201
+Almoxarife "1" --> "*" UC202
+Almoxarife "1" --> "*" UC205
+Almoxarife "1" --> "*" UC206
+Almoxarife "1" --> "*" UC207
+Almoxarife "1" --> "*" UC209
 
-Gestor --> UC208
-Gestor --> UC210 : (Apropria o custo no Projeto ou Frente de Trabalho)
+Gestor "1" --> "*" UC208
+Gestor "1" --> "*" UC210
 
-SST --> UC206 : (Configura regras de EPI e C.A. no cadastro)
-SST --> UC208 : (Requisita EPIs para fornecimento a Terceiros/Próprios)
+SST "1" --> "*" UC206
+SST "1" --> "*" UC208
 
 @enduml
