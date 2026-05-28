@@ -1,55 +1,66 @@
-@startuml InfoAgro - Gestão de Materiais
+@startuml InfoConstru - Gestão de Materiais
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
 
 actor "Almoxarife / Comprador" as Almoxarife
-actor "Gestor de Campo / Fiscal" as Gestor
+actor "Gestor de Obra / Fiscal" as Gestor
 actor "Técnico de Segurança (SST)" as SST
 actor "Fornecedor" as Fornecedor
 
-rectangle "InfoAgro - Módulo Gestão de Materiais" {
+rectangle "InfoConstru - Módulo Gestão de Materiais" {
     
     package "Entrada e Recebimento" {
-        usecase "UC201 - Receber Material via XML de Nota Fiscal" as UC201
-        usecase "UC202 - Realizar Conferência Cega Física/Qualidade" as UC202
-        usecase "UC203 - Devolver Mercadoria com Divergência" as UC203
+        usecase "UC201 - Receber Material" as UC201
+        usecase "UC202 - Realizar Conferência" as UC202
+        usecase "UC203 - Devolver Mercadoria" as UC203
+        
+        ' Decisão quadrada para a conferência
+        rectangle "Sucesso na\nConferência?" as DecisaoConf #FFAAAA
     }
     
     package "Estoque e Armazenamento" {
-        usecase "UC204 - Controlar Lotes e Validades (Defensivos/Sementes)" as UC204
-        usecase "UC205 - Gerenciar Estoque Mínimo e Ponto de Pedido" as UC205
-        usecase "UC206 - Cadastrar Itens (Insumos, EPIs, Peças)" as UC206
-        usecase "UC207 - Realizar Inventário Cíclico / Auditoria" as UC207
+        usecase "UC204 - Controlar Lotes" as UC204
+        usecase "UC205 - Gerenciar Estoque" as UC205
+        usecase "UC206 - Cadastrar Itens" as UC206
+        usecase "UC207 - Realizar Inventário" as UC207
+        
+        ' Decisão quadrada para regras de cadastro
+        rectangle "Exige\nRastreabilidade?" as DecisaoItem #FFAAAA
     }
     
     package "Saída e Requisição" {
-        usecase "UC208 - Solicitá/Requisitar Material ou Insumo" as UC208
-        usecase "UC209 - Autorizar/Liberar Saída de Almoxarifado" as UC209
-        usecase "UC210 - Registrar Consumo por Frente de Trabalho / Centro de Custo" as UC210
+        usecase "UC208 - Requisitar Material" as UC208
+        usecase "UC209 - Autorizar Saída" as UC209
+        usecase "UC210 - Registrar Consumo" as UC210
     }
     
-    ' Relacionamentos de inclusão e extensão
+    ' Relacionamentos e Fluxos com Decisões
     UC201 ..> UC202 : <<include>>
-    UC202 <.. UC203 : <<extend>> (Se houver avaria ou erro)
-    UC206 <.. UC204 : <<extend>> (Se item exigir rastreabilidade)
+    UC202 ..> DecisaoConf : <<avalia>>
+    DecisaoConf ..> UC203 : <<no>> : <<extend>>
+    DecisaoConf ..> UC204 : <<yes>> : <<include>>
+    
+    UC206 ..> DecisaoItem : <<verifica>>
+    DecisaoItem ..> UC204 : <<yes>> : <<extend>>
+    
     UC209 ..> UC210 : <<include>>
 }
 
-' Associações dos Atores
-Almoxarife --> UC201
-Almoxarife --> UC202
-Almoxarife --> UC205
-Almoxarife --> UC206
-Almoxarife --> UC207
-Almoxarife --> UC209
+' Associações com Multiplicidade (Estilo Entidade-Relacionamento)
+Almoxarife "1" --> "*" UC201
+Almoxarife "1" --> "*" UC202
+Almoxarife "1" --> "*" UC205
+Almoxarife "1" --> "*" UC206
+Almoxarife "1" --> "*" UC207
+Almoxarife "1" --> "*" UC209
 
-Gestor --> UC208 : (Solicita ferramentas/insumos para o campo)
-Gestor --> UC210 : (Apropria custo na sua frente)
+Gestor "1" --> "*" UC208
+Gestor "1" --> "*" UC210
 
-SST --> UC206 : (Vicula C.A. ao cadastro de EPIs)
-SST --> UC208 : (Requisita EPIs para estoque de segurança)
+SST "1" --> "*" UC206
+SST "1" --> "*" UC208
 
-Fornecedor --> UC201 : (Disponibiliza XML / Entrega)
+Fornecedor "1" --> "*" UC201
 
 @enduml
