@@ -1,21 +1,21 @@
-@startuml InfoAgro - Gestão de Materiais Atualizado
+@startuml InfoConstru - Gestão de Materiais
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
 
 actor "Almoxarife" as Almoxarife
-actor "Gestor de Campo" as Gestor
+actor "Gestor de Obra" as Gestor
 actor "Técnico de Segurança (SST)" as SST
 
-rectangle "InfoAgro - Módulo Gestão de Materiais" {
+rectangle "InfoConstru - Módulo Gestão de Materiais" {
     
     package "Entrada e Recebimento" {
         usecase "UC201 - Importar XML" as UC201
         usecase "UC202 - Realizar Conferência Cega" as UC202
         usecase "UC203 - Devolver Mercadoria" as UC203
         
-        ' Representação de Decisão/Validação Baseada em Condição
-        usecase "Sucesso na\nConferência?" as Decisao << (D,#FFAAAA) Decisão >>
+        ' Elemento de Decisão em formato Retangular
+        rectangle "Sucesso na\nConferência?" as Decisao #FFAAAA
     }
     
     package "Estoque e Armazenamento" {
